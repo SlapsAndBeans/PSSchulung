@@ -23,6 +23,15 @@ $serverName = Read-Host "ServerInstanceName [$defaultServerName)] mit <Enter> be
 $serverName = ($defaultServerName,$serverName)[[bool]$serverName]
 
 # Neue Server-Instanz anlegen
-$selbcServerInfo | New-GVOBCServerInstance -ServerInstance $serverName -ServiceAccount User -ServiceAccountCredential $cred -Verbose
-
+$newServerInstance =  $selbcServerInfo | New-GVOBCServerInstance -ServerInstance $serverName -ServiceAccount User -ServiceAccountCredential $cred -Verbose
+if ($newServerInstance.ServerInstance -eq $null){
+    $newServerInstance = Get-GVOBCServerInfo -ServerInstance 'BCNew'
+}
 # Neue WebServer-Instanz anlegen
+New-NAVWebServerInstance -WebServerInstance "BCNew" `
+    -Server 'localhost' `
+    -ServerInstance $newServerInstance.ServerInstance `
+    -SiteDeploymentType SubSite `
+    -ClientServicesPort $newServerInstance.ClientServicesPort `
+    -ClientServicesCredentialType $newServerInstance.ClientServicesCredentialType `
+    -ManagementServicesPort $newServerInstance.ManagementServicesPort
