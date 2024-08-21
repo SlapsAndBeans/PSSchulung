@@ -1,3 +1,4 @@
+
 function Get-BCPath {
     [CmdletBinding()]
     param (
@@ -18,7 +19,7 @@ function Get-BCPath {
             $RegVersions= Get-ChildItem -Path $baseKeyPath
             foreach ($i in $RegVersions){
                 $Path = (Get-ItemProperty -Path "$baseKeyPath\$($i.PSChildName)\Service" -Name Path -ErrorAction SilentlyContinue).Path
-                if ($null -eq $Path){
+                if ($null -ne $Path){
                     $BCPaths += [PSCustomObject]@{
                         Version = $i.PSChildName
                         
@@ -32,3 +33,4 @@ function Get-BCPath {
     end {return $BCPaths}
 }
 
+Export-ModuleMember -Function Get-BCPath

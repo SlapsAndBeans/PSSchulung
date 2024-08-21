@@ -3,7 +3,13 @@ function Get-GVOBCServerInfo {
     param (
 
         [Parameter()]
-        [string]$ServerInstance
+        [string]$ServerInstance,
+        [Parameter()]
+        [string[]] $keysWanted = @(
+            'ManagementServicesPort', 'SOAPServicesPort', 'ODataServicesPort', 'DeveloperServicesPort',
+            'SnapshotDebuggerServicesPort', 'ClientServicesPort', 'ManagementApiServicesPort',
+            'ClientServicesCredentialType', 'Database*', '*Company', '*Language',
+            '*Services*Enabled', '*BaseUrl')
     )
     
     begin {
@@ -11,9 +17,9 @@ function Get-GVOBCServerInfo {
     }
     
     process {
-        $keysWanted = @('ManagementServicesPort','Serv*Enabled')
-        $navServIns = Get-NAVServerInstance -ServerInstance $ServerInstance
-        $instanceInfoAll = foreach ($i in $navServIns){
+        
+        $navServInsArray = Get-NAVServerInstance -ServerInstance $ServerInstance
+        $instanceInfoAll = foreach ($i in $navServInsArray){
             [PSCustomObject]@{
                 ServerInstance = $i.ServerInstance
                 DisplayName = $i.DisplayName
@@ -43,3 +49,4 @@ function Get-GVOBCServerInfo {
     }
 
 }
+Export-ModuleMember -Function Get-GVOBCServerInfo
